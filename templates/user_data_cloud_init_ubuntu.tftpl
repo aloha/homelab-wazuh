@@ -1,0 +1,21 @@
+#cloud-config
+
+package_update: false
+package_upgrade: false
+
+# APT fails to acquire GPG keys if package dirmngr is missing
+bootcmd:
+  - [ cloud-init-per, once, dirmngr-aptupdate, apt-get, update ]
+  - [ cloud-init-per, once, dirmngr-aptinstall, apt-get, install, dirmngr, -y ]
+  - [ cloud-init-per, once, dirmngr-aptinstall, apt-get, install, gnupg2, -y ]
+
+users:
+- name: ubuntu
+  groups: sudo
+  shell: /bin/bash
+  sudo: ['ALL=(ALL) NOPASSWD:ALL']
+  ssh_authorized_keys:
+    - '${public_key}'
+
+# preserve_hostname: false
+# manage_etc_hosts: false
